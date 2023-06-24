@@ -8,8 +8,11 @@ use Illuminate\Support\Facades\Http;
 class MTNCMPayoutService
 {
     protected $api_user;
+
     protected $api_key;
+
     protected $primary_key;
+
     public function __construct(array $keys)
     {
         $this->api_key = $keys['api_key'];
@@ -20,11 +23,11 @@ class MTNCMPayoutService
     public function getToken()
     {
 
-        $r = Http::withBasicAuth($this->api_user, $this->api_key)->withOptions(['verify'=>false])->withHeaders([
-            'Ocp-Apim-Subscription-Key' => $this->primary_key
+        $r = Http::withBasicAuth($this->api_user, $this->api_key)->withOptions(['verify' => false])->withHeaders([
+            'Ocp-Apim-Subscription-Key' => $this->primary_key,
         ])->post('https://proxy.momoapi.mtn.com/disbursement/token/');
 
-        if($r->ok()) {
+        if ($r->ok()) {
             return $r->json()['access_token'];
         }
 
@@ -33,11 +36,11 @@ class MTNCMPayoutService
 
     public function charge(array $data)
     {
-        if($token = $this->getToken()) {
+        if ($token = $this->getToken()) {
             $_data = [
                 'amount' => (string) $data['amount'],
                 'currency' => 'XAF',
-                'externalId' => isset($data['reference'])? $data['reference']: str()->random(12),
+                'externalId' => isset($data['reference']) ? $data['reference'] : str()->random(12),
                 'payer' => [
                     'partyIdType' => 'MSISDN',
                     'partyId' => '237'.$data['phone'],
@@ -59,19 +62,22 @@ class MTNCMPayoutService
             ];
 
             try {
-                $res = Http::acceptJson()->withBasicAuth($this->api_user, $this->api_key)->withOptions(['verify'=>true])->withHeaders($headers)->post('https://proxy.momoapi.mtn.com/disbursement/v2_0/deposit', $_data);
-                if($res->ok()) {
+                $res = Http::acceptJson()->withBasicAuth($this->api_user, $this->api_key)->withOptions(['verify' => true])->withHeaders($headers)->post('https://proxy.momoapi.mtn.com/disbursement/v2_0/deposit', $_data);
+                if ($res->ok()) {
                     return $res->json();
                 }
                 ray($res->status());
-                return  false;
+
+                return false;
 
             } catch (\Exception $e) {
                 \Log::debug($e);
                 ray($e);
+
                 return false;
             }
         }
+
         return false;
     }
 }
