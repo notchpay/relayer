@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChargeController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/charge/{token}', [ChargeController::class, 'handle']);
-Route::post('/charge/{token}', [ChargeController::class, 'handle']);
+Route::post('/charge', [ChargeController::class,'handle']);
