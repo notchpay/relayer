@@ -11,6 +11,4 @@
 |
 */
 
-use App\Http\Controllers\ChargeController;
 
-Route::post('/charge', [ChargeController::class,'handle']);
