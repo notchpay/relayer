@@ -10,3 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+use App\Http\Controllers\ChargeController;
+
+Route::post('/charge', [ChargeController::class,'handle']);
